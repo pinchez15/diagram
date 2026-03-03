@@ -17,7 +17,7 @@ export async function GET(
     .from('diagrams')
     .select('*')
     .eq('id', id)
-    .eq('user_id', userId)
+    .eq('owner_id', userId)
     .single();
 
   if (error || !data) {
@@ -38,20 +38,20 @@ export async function PUT(
 
   const { id } = await params;
   const body = await request.json();
-  const { title, description, type, schema_data } = body;
+  const { title, description, type, canvas_data } = body;
 
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (title !== undefined) updates.title = title;
   if (description !== undefined) updates.description = description;
   if (type !== undefined) updates.type = type;
-  if (schema_data !== undefined) updates.schema_data = schema_data;
+  if (canvas_data !== undefined) updates.canvas_data = canvas_data;
 
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from('diagrams')
     .update(updates)
     .eq('id', id)
-    .eq('user_id', userId)
+    .eq('owner_id', userId)
     .select()
     .single();
 
@@ -77,7 +77,7 @@ export async function DELETE(
     .from('diagrams')
     .delete()
     .eq('id', id)
-    .eq('user_id', userId);
+    .eq('owner_id', userId);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

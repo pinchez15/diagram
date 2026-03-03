@@ -23,7 +23,7 @@ export default function TemplatesPage() {
       body: JSON.stringify({
         title: template.name,
         type: template.type,
-        schema_data: template.schema,
+        canvas_data: template.schema,
       }),
     });
 

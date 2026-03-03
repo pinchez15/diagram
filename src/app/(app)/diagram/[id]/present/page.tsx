@@ -16,12 +16,12 @@ export default async function PresentPage({
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from('diagrams')
-    .select('schema_data')
+    .select('canvas_data')
     .eq('id', id)
-    .eq('user_id', userId)
+    .eq('owner_id', userId)
     .single();
 
   if (error || !data) notFound();
 
-  return <PresentationView schema={data.schema_data as DiagramSchema} diagramId={id} />;
+  return <PresentationView schema={data.canvas_data as DiagramSchema} diagramId={id} />;
 }

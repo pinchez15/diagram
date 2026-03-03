@@ -13,7 +13,7 @@ export default async function DashboardPage() {
   const { data: diagrams } = await supabase
     .from('diagrams')
     .select('id, title, description, type, created_at, updated_at')
-    .eq('user_id', userId)
+    .eq('owner_id', userId)
     .order('updated_at', { ascending: false });
 
   const items = (diagrams ?? []) as DiagramListItem[];

@@ -31,7 +31,7 @@ export function useAutoSave(diagramId: string, title: string) {
       const res = await fetch(`/api/diagrams/${diagramId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: payload,
+        body: JSON.stringify({ title, canvas_data: schema }),
       });
 
       if (!res.ok) throw new Error('Save failed');

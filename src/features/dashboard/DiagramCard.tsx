@@ -35,7 +35,7 @@ export function DiagramCard({ diagram }: DiagramCardProps) {
       body: JSON.stringify({
         title: `${diagram.title} (copy)`,
         type: diagram.type,
-        schema_data: original.schema_data,
+        canvas_data: original.canvas_data,
       }),
     });
     router.refresh();

@@ -11,6 +11,7 @@ interface WebhookEvent {
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
   if (!WEBHOOK_SECRET) {
+    console.error("[webhook] CLERK_WEBHOOK_SECRET not configured");
     return NextResponse.json(
       { error: "Webhook secret not configured" },
       { status: 500 }
@@ -24,6 +25,7 @@ export async function POST(req: Request) {
   const svixSignature = headerPayload.get("svix-signature");
 
   if (!svixId || !svixTimestamp || !svixSignature) {
+    console.error("[webhook] Missing svix headers");
     return NextResponse.json(
       { error: "Missing svix headers" },
       { status: 400 }
@@ -40,13 +42,15 @@ export async function POST(req: Request) {
       "svix-timestamp": svixTimestamp,
       "svix-signature": svixSignature,
     }) as WebhookEvent;
-  } catch {
+  } catch (err) {
+    console.error("[webhook] Invalid signature:", err);
     return NextResponse.json(
       { error: "Invalid webhook signature" },
       { status: 400 }
     );
   }
 
+  console.log(`[webhook] Received event: ${event.type}`);
   const supabase = createServiceClient();
 
   switch (event.type) {
@@ -60,7 +64,7 @@ export async function POST(req: Request) {
       };
       const fullName = [first_name, last_name].filter(Boolean).join(" ") || null;
 
-      await supabase.from("profiles").upsert(
+      const { error } = await supabase.from("profiles").upsert(
         {
           id,
           clerk_user_id: id,
@@ -70,15 +74,24 @@ export async function POST(req: Request) {
         },
         { onConflict: "id" }
       );
+      if (error) {
+        console.error(`[webhook] Failed to upsert profile for ${id}:`, error.message);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      console.log(`[webhook] Upserted profile for ${id}`);
       break;
     }
 
     case "user.deleted": {
       const { id } = event.data as { id: string };
-      await supabase
+      // Set plan to 'individual' (safe value within check constraint) and mark as soft-deleted via updated_at
+      const { error } = await supabase
         .from("profiles")
-        .update({ plan: "deleted", updated_at: new Date().toISOString() })
+        .update({ plan: "individual", updated_at: new Date().toISOString() })
         .eq("id", id);
+      if (error) {
+        console.error(`[webhook] Failed to handle user.deleted for ${id}:`, error.message);
+      }
       break;
     }
 
@@ -89,10 +102,15 @@ export async function POST(req: Request) {
         plan: string;
       };
       if (user_id && plan) {
-        await supabase
+        // Map to values allowed by DB check constraint
+        const safePlan = plan === "team" ? "team" : "individual";
+        const { error } = await supabase
           .from("profiles")
-          .update({ plan, updated_at: new Date().toISOString() })
+          .update({ plan: safePlan, updated_at: new Date().toISOString() })
           .eq("id", user_id);
+        if (error) {
+          console.error(`[webhook] Failed to update subscription for ${user_id}:`, error.message);
+        }
       }
       break;
     }
@@ -100,10 +118,13 @@ export async function POST(req: Request) {
     case "subscription.deleted": {
       const { user_id } = event.data as { user_id: string };
       if (user_id) {
-        await supabase
+        const { error } = await supabase
           .from("profiles")
-          .update({ plan: "expired", updated_at: new Date().toISOString() })
+          .update({ plan: "individual", updated_at: new Date().toISOString() })
           .eq("id", user_id);
+        if (error) {
+          console.error(`[webhook] Failed to handle subscription.deleted for ${user_id}:`, error.message);
+        }
       }
       break;
     }

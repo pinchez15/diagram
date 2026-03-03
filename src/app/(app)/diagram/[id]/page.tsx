@@ -18,12 +18,12 @@ export default async function DiagramEditorPage({
     .from('diagrams')
     .select('*')
     .eq('id', id)
-    .eq('user_id', userId)
+    .eq('owner_id', userId)
     .single();
 
   if (error || !data) notFound();
 
-  const schema = data.schema_data as DiagramSchema;
+  const schema = data.canvas_data as DiagramSchema;
 
   return <DiagramEditorWrapper diagramId={id} initialSchema={schema} />;
 }

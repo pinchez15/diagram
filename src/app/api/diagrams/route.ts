@@ -14,7 +14,7 @@ export async function GET() {
   const { data, error } = await supabase
     .from('diagrams')
     .select('id, title, description, type, created_at, updated_at')
-    .eq('user_id', userId)
+    .eq('owner_id', userId)
     .order('updated_at', { ascending: false });
 
   if (error) {
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
   const { count, error: countError } = await supabase
     .from('diagrams')
     .select('*', { count: 'exact', head: true })
-    .eq('user_id', userId);
+    .eq('owner_id', userId);
 
   if (countError) {
     return NextResponse.json({ error: countError.message }, { status: 500 });
@@ -58,16 +58,16 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { title, description, type, schema_data } = body;
+  const { title, description, type, canvas_data } = body;
 
   const { data, error } = await supabase
     .from('diagrams')
     .insert({
-      user_id: userId,
+      owner_id: userId,
       title: title || 'Untitled Diagram',
       description: description || null,
       type: type || 'workflow',
-      schema_data: schema_data || {
+      canvas_data: canvas_data || {
         schema_version: 1,
         metadata: { type: type || 'workflow', title: title || 'Untitled Diagram' },
         nodes: [],

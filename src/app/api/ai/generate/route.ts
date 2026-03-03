@@ -6,7 +6,7 @@ import { generateDiagram } from '@/lib/ai/claude';
 import { validateDiagramSchema } from '@/lib/schema/validate';
 import type { DiagramType } from '@/types/diagram';
 
-const MAX_AI_GENERATIONS_FREE = 10;
+const MAX_AI_GENERATIONS_FREE = 50;
 
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
@@ -21,18 +21,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
   }
 
-  // Check usage limits
   const supabase = createServiceClient();
+
+  // Check plan
   const { data: profile } = await supabase
     .from('profiles')
-    .select('plan, ai_generations_count')
+    .select('plan')
     .eq('clerk_user_id', userId)
     .single();
 
   const plan = profile?.plan || 'individual';
-  const count = profile?.ai_generations_count || 0;
 
-  if (plan === 'individual' && count >= MAX_AI_GENERATIONS_FREE) {
+  // Check usage from usage table
+  const currentMonth = new Date().toISOString().slice(0, 7) + '-01'; // YYYY-MM-01
+  const { data: usage } = await supabase
+    .from('usage')
+    .select('ai_generation_count')
+    .eq('user_id', userId)
+    .eq('month', currentMonth)
+    .single();
+
+  const aiCount = usage?.ai_generation_count || 0;
+
+  if (plan === 'individual' && aiCount >= MAX_AI_GENERATIONS_FREE) {
     return NextResponse.json(
       { error: 'Free plan AI generation limit reached. Upgrade to continue.' },
       { status: 403 }
@@ -56,16 +67,13 @@ export async function POST(request: NextRequest) {
       const validation = validateDiagramSchema(parsed);
 
       if (validation.success) {
-        // Increment usage counter
-        await supabase
-          .from('profiles')
-          .update({ ai_generations_count: count + 1 })
-          .eq('clerk_user_id', userId);
+        // Increment usage via the DB function
+        await supabase.rpc('increment_ai_count', { p_user_id: userId });
 
         return NextResponse.json(validation.data);
       }
 
-      // Validation failed — retry with more specific prompt on first attempt
+      // Validation failed — retry on first attempt
       if (attempt === 0) continue;
 
       return NextResponse.json(

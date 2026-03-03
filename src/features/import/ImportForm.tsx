@@ -29,7 +29,7 @@ export function ImportForm() {
         body: JSON.stringify({
           title: validation.data.metadata.title,
           type: validation.data.metadata.type,
-          schema_data: validation.data,
+          canvas_data: validation.data,
         }),
       });
 
