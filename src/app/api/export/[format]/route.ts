@@ -1,29 +1,54 @@
-import { auth } from "@clerk/nextjs/server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
+import { validateDiagramSchema } from '@/lib/schema/validate';
+import { diagramToMermaid } from '@/features/export/mermaidExport';
 
-const VALID_FORMATS = ["png", "svg", "pdf", "json", "mermaid"] as const;
-
-export async function GET(
-  _request: NextRequest,
+export async function POST(
+  request: NextRequest,
   { params }: { params: Promise<{ format: string }> }
 ) {
   const { userId } = await auth();
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { format } = await params;
+  const body = await request.json();
+  const validation = validateDiagramSchema(body);
 
-  if (!VALID_FORMATS.includes(format as (typeof VALID_FORMATS)[number])) {
-    return NextResponse.json(
-      { error: `Invalid format. Valid formats: ${VALID_FORMATS.join(", ")}` },
-      { status: 400 }
-    );
+  if (!validation.success) {
+    return NextResponse.json({ error: 'Invalid diagram schema' }, { status: 400 });
   }
 
-  // Backend Agent will implement: server-side rendering for each format
-  return NextResponse.json(
-    { error: "Not implemented" },
-    { status: 501 }
-  );
+  const schema = validation.data;
+
+  switch (format) {
+    case 'json': {
+      const json = JSON.stringify(schema, null, 2);
+      return new NextResponse(json, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Disposition': `attachment; filename="${schema.metadata.title.replace(/\s+/g, '-')}.json"`,
+        },
+      });
+    }
+    case 'mermaid': {
+      const mermaid = diagramToMermaid(schema);
+      return new NextResponse(mermaid, {
+        headers: {
+          'Content-Type': 'text/plain',
+          'Content-Disposition': `attachment; filename="${schema.metadata.title.replace(/\s+/g, '-')}.mmd"`,
+        },
+      });
+    }
+    case 'png':
+    case 'svg':
+    case 'pdf':
+      return NextResponse.json(
+        { error: `${format.toUpperCase()} export is handled client-side` },
+        { status: 501 }
+      );
+    default:
+      return NextResponse.json({ error: 'Unsupported format' }, { status: 400 });
+  }
 }

@@ -37,6 +37,7 @@ interface CanvasState {
   addNode: (node: DiagramFlowNode) => void;
   removeNodes: (ids: string[]) => void;
   updateNodeData: (id: string, data: Partial<DiagramFlowNode["data"]>) => void;
+  updateEdgeData: (id: string, data: Partial<DiagramFlowEdge["data"]>) => void;
   setViewport: (viewport: Viewport) => void;
 
   // Undo/Redo
@@ -89,6 +90,14 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
     set({
       nodes: get().nodes.map((n) =>
         n.id === id ? { ...n, data: { ...n.data, ...data } } : n
+      ),
+    });
+  },
+
+  updateEdgeData: (id, data) => {
+    set({
+      edges: get().edges.map((e) =>
+        e.id === id ? { ...e, data: { ...e.data, ...data } } : e
       ),
     });
   },

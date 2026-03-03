@@ -1,0 +1,29 @@
+'use client';
+
+import { memo } from 'react';
+import { Handle, Position, type NodeProps } from '@xyflow/react';
+import type { DiagramNodeData } from '@/types/node';
+import { getCategoryColor } from './categoryColors';
+
+function ToolServiceNodeInner({ data, selected }: NodeProps & { data: DiagramNodeData }) {
+  const colors = getCategoryColor(data.toolCategory);
+  return (
+    <div
+      className={`flex items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm transition-shadow
+        ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : colors.border}
+        ${colors.bg} hover:shadow-md`}
+      style={{ width: 160, height: 60 }}
+    >
+      <Handle type="target" position={Position.Left} className="!w-2 !h-2 !bg-neutral-400" />
+      <div className="min-w-0 flex-1">
+        <div className="font-medium text-neutral-900 truncate">{data.label}</div>
+        {data.toolName && (
+          <div className={`text-xs truncate ${colors.text}`}>{data.toolName}</div>
+        )}
+      </div>
+      <Handle type="source" position={Position.Right} className="!w-2 !h-2 !bg-neutral-400" />
+    </div>
+  );
+}
+
+export const ToolServiceNode = memo(ToolServiceNodeInner);
