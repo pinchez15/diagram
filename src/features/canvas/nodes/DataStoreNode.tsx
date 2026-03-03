@@ -14,9 +14,12 @@ function DataStoreNodeInner({ data, selected }: NodeProps & { data: DiagramNodeD
         hover:shadow-md`}
       style={{ width: 160, height: 60 }}
     >
-      <div className={`h-1.5 ${colors.border.replace('border', 'bg')}`} style={{ backgroundColor: `var(--category-${data.toolCategory || 'database'})` }} />
-      <Handle type="target" position={Position.Left} className="!w-2 !h-2 !bg-neutral-400" />
-      <div className="flex items-center justify-center px-3 py-2">
+      <div style={{ height: 4, backgroundColor: `var(--category-${data.toolCategory || 'database'})` }} />
+      <Handle type="target" position={Position.Top} id="top" />
+      <Handle type="target" position={Position.Left} id="left" />
+      <Handle type="source" position={Position.Bottom} id="bottom" />
+      <Handle type="source" position={Position.Right} id="right" />
+      <div className="flex items-center justify-center px-3 py-2 pointer-events-none">
         <div className="text-center truncate">
           <div className="text-sm font-medium text-neutral-900 truncate">{data.label}</div>
           {data.description && (
@@ -24,7 +27,6 @@ function DataStoreNodeInner({ data, selected }: NodeProps & { data: DiagramNodeD
           )}
         </div>
       </div>
-      <Handle type="source" position={Position.Right} className="!w-2 !h-2 !bg-neutral-400" />
     </div>
   );
 }

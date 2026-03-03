@@ -12,14 +12,16 @@ function ProcessNodeInner({ data, selected }: NodeProps & { data: DiagramNodeDat
         hover:shadow-md`}
       style={{ width: 160, height: 60 }}
     >
-      <Handle type="target" position={Position.Left} className="!w-2 !h-2 !bg-neutral-400" />
-      <div className="text-center truncate">
+      <Handle type="target" position={Position.Top} id="top" />
+      <Handle type="target" position={Position.Left} id="left" />
+      <Handle type="source" position={Position.Bottom} id="bottom" />
+      <Handle type="source" position={Position.Right} id="right" />
+      <div className="text-center truncate pointer-events-none">
         <div className="font-medium text-neutral-900 truncate">{data.label}</div>
         {data.description && (
           <div className="text-xs text-neutral-500 truncate">{data.description}</div>
         )}
       </div>
-      <Handle type="source" position={Position.Right} className="!w-2 !h-2 !bg-neutral-400" />
     </div>
   );
 }

@@ -14,14 +14,16 @@ function ToolServiceNodeInner({ data, selected }: NodeProps & { data: DiagramNod
         ${colors.bg} hover:shadow-md`}
       style={{ width: 160, height: 60 }}
     >
-      <Handle type="target" position={Position.Left} className="!w-2 !h-2 !bg-neutral-400" />
-      <div className="min-w-0 flex-1">
+      <Handle type="target" position={Position.Top} id="top" />
+      <Handle type="target" position={Position.Left} id="left" />
+      <Handle type="source" position={Position.Bottom} id="bottom" />
+      <Handle type="source" position={Position.Right} id="right" />
+      <div className="min-w-0 flex-1 pointer-events-none">
         <div className="font-medium text-neutral-900 truncate">{data.label}</div>
         {data.toolName && (
           <div className={`text-xs truncate ${colors.text}`}>{data.toolName}</div>
         )}
       </div>
-      <Handle type="source" position={Position.Right} className="!w-2 !h-2 !bg-neutral-400" />
     </div>
   );
 }

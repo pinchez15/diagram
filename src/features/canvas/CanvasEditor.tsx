@@ -6,6 +6,7 @@ import {
   Background,
   MiniMap,
   Controls,
+  ConnectionMode,
   type ReactFlowInstance,
   type Connection,
 } from '@xyflow/react';
@@ -68,6 +69,7 @@ export function CanvasEditor() {
         onDragOver={onDragOver}
         onDrop={onDrop}
         nodeTypes={nodeTypes}
+        connectionMode={ConnectionMode.Loose}
         snapToGrid
         snapGrid={[10, 10]}
         fitView

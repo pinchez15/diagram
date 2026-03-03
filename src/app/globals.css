@@ -148,3 +148,32 @@ body {
 .animate-in.slide-in-from-right {
   animation: slide-in-from-right 0.3s ease-out;
 }
+
+/* React Flow handle styling */
+.react-flow__handle {
+  width: 8px !important;
+  height: 8px !important;
+  background: var(--neutral-400) !important;
+  border: 2px solid white !important;
+  border-radius: 50% !important;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.react-flow__node:hover .react-flow__handle,
+.react-flow__node.selected .react-flow__handle {
+  opacity: 1;
+}
+
+.react-flow__handle:hover,
+.react-flow__handle.connecting {
+  background: var(--brand-primary) !important;
+  opacity: 1;
+}
+
+/* When actively connecting, show all handles */
+.react-flow__handle.connectingfrom,
+.react-flow__handle.connectingto,
+.connecting .react-flow__handle {
+  opacity: 1;
+}

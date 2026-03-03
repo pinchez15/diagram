@@ -12,9 +12,11 @@ function StartEndNodeInner({ data, selected }: NodeProps & { data: DiagramNodeDa
         hover:shadow-md`}
       style={{ width: 120, height: 40 }}
     >
-      <Handle type="target" position={Position.Left} className="!w-2 !h-2 !bg-neutral-400" />
-      <span className="font-medium text-neutral-700">{data.label}</span>
-      <Handle type="source" position={Position.Right} className="!w-2 !h-2 !bg-neutral-400" />
+      <Handle type="target" position={Position.Top} id="top" />
+      <Handle type="target" position={Position.Left} id="left" />
+      <Handle type="source" position={Position.Bottom} id="bottom" />
+      <Handle type="source" position={Position.Right} id="right" />
+      <span className="font-medium text-neutral-700 pointer-events-none">{data.label}</span>
     </div>
   );
 }

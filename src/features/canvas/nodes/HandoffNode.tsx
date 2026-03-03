@@ -12,9 +12,11 @@ function HandoffNodeInner({ data, selected }: NodeProps & { data: DiagramNodeDat
         hover:shadow-md`}
       style={{ width: 100, height: 40 }}
     >
-      <Handle type="target" position={Position.Left} className="!w-2 !h-2 !bg-brand-primary" />
-      <span className="font-medium text-brand-primary truncate">{data.label}</span>
-      <Handle type="source" position={Position.Right} className="!w-2 !h-2 !bg-brand-primary" />
+      <Handle type="target" position={Position.Top} id="top" />
+      <Handle type="target" position={Position.Left} id="left" />
+      <Handle type="source" position={Position.Bottom} id="bottom" />
+      <Handle type="source" position={Position.Right} id="right" />
+      <span className="font-medium text-brand-primary truncate pointer-events-none">{data.label}</span>
     </div>
   );
 }
