@@ -9,8 +9,8 @@ function DataStoreNodeInner({ data, selected }: NodeProps & { data: DiagramNodeD
   const colors = getCategoryColor(data.toolCategory);
   return (
     <div
-      className={`overflow-hidden rounded-lg border bg-white transition-shadow
-        ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : 'border-neutral-300'}
+      className={`overflow-hidden rounded-lg border bg-white transition-shadow transition-colors cursor-grab active:cursor-grabbing
+        ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : 'border-neutral-300 hover:border-brand-primary/50'}
         hover:shadow-md`}
       style={{ width: 160, height: 60 }}
     >

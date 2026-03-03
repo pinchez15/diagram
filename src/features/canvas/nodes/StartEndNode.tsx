@@ -7,8 +7,8 @@ import type { DiagramNodeData } from '@/types/node';
 function StartEndNodeInner({ data, selected }: NodeProps & { data: DiagramNodeData }) {
   return (
     <div
-      className={`flex items-center justify-center rounded-full border bg-neutral-100 px-4 py-2 text-sm transition-shadow
-        ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : 'border-neutral-300'}
+      className={`flex items-center justify-center rounded-full border bg-neutral-100 px-4 py-2 text-sm transition-shadow transition-colors cursor-grab active:cursor-grabbing
+        ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : 'border-neutral-300 hover:border-brand-primary/50'}
         hover:shadow-md`}
       style={{ width: 120, height: 40 }}
     >

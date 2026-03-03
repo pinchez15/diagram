@@ -8,8 +8,8 @@ function SwimlaneNodeInner({ data, selected }: NodeProps & { data: DiagramNodeDa
   const [collapsed, setCollapsed] = useState(false);
   return (
     <div
-      className={`rounded-lg border bg-neutral-50/50 transition-shadow
-        ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : 'border-neutral-200'}
+      className={`rounded-lg border bg-neutral-50/50 transition-shadow transition-colors
+        ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : 'border-neutral-200 hover:border-brand-primary/50'}
         hover:shadow-sm`}
       style={{ width: '100%', minWidth: 600, minHeight: collapsed ? 48 : 200 }}
     >

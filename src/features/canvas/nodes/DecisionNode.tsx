@@ -6,14 +6,14 @@ import type { DiagramNodeData } from '@/types/node';
 
 function DecisionNodeInner({ data, selected }: NodeProps & { data: DiagramNodeData }) {
   return (
-    <div className="relative" style={{ width: 100, height: 100 }}>
+    <div className="relative cursor-grab active:cursor-grabbing" style={{ width: 100, height: 100 }}>
       <Handle type="target" position={Position.Top} id="top" />
       <Handle type="target" position={Position.Left} id="left" />
       <Handle type="source" position={Position.Bottom} id="bottom" />
       <Handle type="source" position={Position.Right} id="right" />
       <div
-        className={`absolute inset-[8px] flex items-center justify-center border-2 bg-white transition-shadow
-          ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : 'border-neutral-300'}
+        className={`absolute inset-[8px] flex items-center justify-center border-2 bg-white transition-shadow transition-colors
+          ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : 'border-neutral-300 hover:border-brand-primary/50'}
           hover:shadow-md`}
         style={{ transform: 'rotate(45deg)', borderRadius: 4 }}
       >

@@ -9,8 +9,8 @@ function ToolServiceNodeInner({ data, selected }: NodeProps & { data: DiagramNod
   const colors = getCategoryColor(data.toolCategory);
   return (
     <div
-      className={`flex items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm transition-shadow
-        ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : colors.border}
+      className={`flex items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm transition-shadow transition-colors cursor-grab active:cursor-grabbing
+        ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : `${colors.border} hover:border-brand-primary/50`}
         ${colors.bg} hover:shadow-md`}
       style={{ width: 160, height: 60 }}
     >

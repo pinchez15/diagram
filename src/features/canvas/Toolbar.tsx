@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Save, Sparkles, Download, Undo2, Redo2, LayoutDashboard, Maximize } from 'lucide-react';
+import { ArrowLeft, Save, Sparkles, Download, Undo2, Redo2, LayoutDashboard, Maximize, MessageSquare } from 'lucide-react';
 import { Button } from '@/components';
 import { useCanvasStore } from '@/stores/canvasStore';
 
@@ -11,11 +11,13 @@ interface ToolbarProps {
   onTitleChange: (title: string) => void;
   saveStatus: 'saved' | 'saving' | 'unsaved' | 'error';
   onAIGenerate: () => void;
+  onAIChat: () => void;
   onExport: (format: string) => void;
   onAutoLayout: () => void;
+  chatActive?: boolean;
 }
 
-export function Toolbar({ title, onTitleChange, saveStatus, onAIGenerate, onExport, onAutoLayout }: ToolbarProps) {
+export function Toolbar({ title, onTitleChange, saveStatus, onAIGenerate, onAIChat, onExport, onAutoLayout, chatActive }: ToolbarProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const undo = useCanvasStore((s) => s.undo);
@@ -79,6 +81,14 @@ export function Toolbar({ title, onTitleChange, saveStatus, onAIGenerate, onExpo
         <Button variant="ai" size="compact" onClick={onAIGenerate}>
           <Sparkles className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">AI Generate</span>
+        </Button>
+        <Button
+          variant={chatActive ? 'primary' : 'secondary'}
+          size="compact"
+          onClick={onAIChat}
+        >
+          <MessageSquare className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">AI Chat</span>
         </Button>
         <div className="relative">
           <Button variant="secondary" size="compact" onClick={() => setExportOpen(!exportOpen)}>

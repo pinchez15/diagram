@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { ReactFlowProvider, useReactFlow } from '@xyflow/react';
+import { ReactFlowProvider } from '@xyflow/react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { CanvasEditor } from './CanvasEditor';
 import { Toolbar } from './Toolbar';
 import { NodePalette } from './NodePalette';
 import { PropertiesPanel } from './PropertiesPanel';
+import { ChatPanel } from './ChatPanel';
 import { GenerateDialog } from './GenerateDialog';
 import { useAutoSave } from './useAutoSave';
 import { useAutoLayout } from './useAutoLayout';
@@ -22,9 +23,11 @@ function EditorInner({ diagramId, initialSchema }: DiagramEditorWrapperProps) {
   const [title, setTitle] = useState(initialSchema.metadata.title);
   const [selectedNode, setSelectedNode] = useState<DiagramFlowNode | null>(null);
   const [showGenerate, setShowGenerate] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   const loadDiagram = useCanvasStore((s) => s.loadDiagram);
   const nodes = useCanvasStore((s) => s.nodes);
+  const onNodesChange = useCanvasStore((s) => s.onNodesChange);
   const serialize = useCanvasStore((s) => s.serialize);
 
   const { saveStatus } = useAutoSave(diagramId, title);
@@ -39,6 +42,15 @@ function EditorInner({ diagramId, initialSchema }: DiagramEditorWrapperProps) {
     const selected = nodes.find((n) => n.selected);
     setSelectedNode(selected || null);
   }, [nodes]);
+
+  const handleDeselectNode = useCallback(() => {
+    // Dispatch a selection change to deselect the node in React Flow
+    // This prevents the useEffect from immediately re-selecting it
+    const selected = nodes.find((n) => n.selected);
+    if (selected) {
+      onNodesChange([{ id: selected.id, type: 'select', selected: false }]);
+    }
+  }, [nodes, onNodesChange]);
 
   const handleExport = useCallback(async (format: string) => {
     if (format === 'json') {
@@ -80,18 +92,27 @@ function EditorInner({ diagramId, initialSchema }: DiagramEditorWrapperProps) {
         onTitleChange={setTitle}
         saveStatus={saveStatus}
         onAIGenerate={() => setShowGenerate(true)}
+        onAIChat={() => setShowChat((v) => !v)}
         onExport={handleExport}
         onAutoLayout={applyLayout}
+        chatActive={showChat}
       />
       <div className="flex flex-1 overflow-hidden">
         <NodePalette />
         <div className="flex-1">
           <CanvasEditor />
         </div>
-        <PropertiesPanel
-          selectedNode={selectedNode}
-          onClose={() => setSelectedNode(null)}
-        />
+        {showChat ? (
+          <ChatPanel
+            diagramType={initialSchema.metadata.type}
+            onClose={() => setShowChat(false)}
+          />
+        ) : (
+          <PropertiesPanel
+            selectedNode={selectedNode}
+            onClose={handleDeselectNode}
+          />
+        )}
       </div>
       <GenerateDialog open={showGenerate} onClose={() => setShowGenerate(false)} />
     </div>

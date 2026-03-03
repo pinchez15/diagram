@@ -14,8 +14,8 @@ function PersonNodeInner({ data, selected }: NodeProps & { data: DiagramNodeData
 
   return (
     <div
-      className={`flex items-center gap-3 rounded-lg border bg-white px-3 py-2 transition-shadow
-        ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : 'border-neutral-300'}
+      className={`flex items-center gap-3 rounded-lg border bg-white px-3 py-2 transition-shadow transition-colors cursor-grab active:cursor-grabbing
+        ${selected ? 'border-brand-primary ring-2 ring-brand-primary/30' : 'border-neutral-300 hover:border-brand-primary/50'}
         hover:shadow-md`}
       style={{ width: 180, height: 70 }}
     >
