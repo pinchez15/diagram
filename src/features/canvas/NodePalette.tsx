@@ -50,6 +50,7 @@ export function NodePalette() {
       <button
         onClick={() => setExpanded(!expanded)}
         className="flex h-10 items-center justify-center border-b border-neutral-200 text-neutral-400 hover:text-neutral-600"
+        title={expanded ? 'Collapse palette' : 'Node palette'}
       >
         {expanded ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
       </button>

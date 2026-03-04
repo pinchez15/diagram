@@ -120,21 +120,18 @@ export function ChatFirstEditor({ diagramId, initialSchema }: ChatFirstEditorPro
         <div className="flex-1">
           <CanvasEditor />
         </div>
-        {/* Right panel: Chat always mounted, Properties overlays when node selected */}
-        <div className="relative flex w-[360px] flex-shrink-0">
+        {/* Right panel: Properties replaces Chat when node selected */}
+        {selectedNode ? (
+          <PropertiesPanel
+            selectedNode={selectedNode}
+            onClose={handleDeselectNode}
+          />
+        ) : (
           <ChatPanel
             diagramType={diagramType}
             onDiagramGenerated={handleDiagramGenerated}
           />
-          {selectedNode && (
-            <div className="absolute inset-0 z-10">
-              <PropertiesPanel
-                selectedNode={selectedNode}
-                onClose={handleDeselectNode}
-              />
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
