@@ -21,10 +21,10 @@ export default function MarketingLayout({
           </SignedOut>
           <SignedIn>
             <a
-              href="/dashboard"
+              href="/new"
               className="text-sm text-neutral-600 hover:text-foreground"
             >
-              Dashboard
+              Editor
             </a>
             <UserButton />
           </SignedIn>

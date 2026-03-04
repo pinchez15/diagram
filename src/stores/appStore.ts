@@ -12,6 +12,7 @@ interface AppState {
 
   // UI state
   sidebarOpen: boolean;
+  diagramListVersion: number;
 
   // Actions
   setPlan: (plan: PlanType) => void;
@@ -19,6 +20,7 @@ interface AppState {
   setCurrentTeam: (team: Team | null) => void;
   setTeamMembers: (members: TeamMember[]) => void;
   toggleSidebar: () => void;
+  incrementDiagramListVersion: () => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -27,10 +29,13 @@ export const useAppStore = create<AppState>((set) => ({
   currentTeam: null,
   teamMembers: [],
   sidebarOpen: true,
+  diagramListVersion: 0,
 
   setPlan: (plan) => set({ plan }),
   setTrialEndsAt: (date) => set({ trialEndsAt: date }),
   setCurrentTeam: (team) => set({ currentTeam: team }),
   setTeamMembers: (members) => set({ teamMembers: members }),
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+  incrementDiagramListVersion: () =>
+    set((state) => ({ diagramListVersion: state.diagramListVersion + 1 })),
 }));

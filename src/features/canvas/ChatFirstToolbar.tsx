@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { Download, Undo2, Redo2, LayoutDashboard, Blocks } from 'lucide-react';
+import { Download, Undo2, Redo2, LayoutDashboard, Blocks, PanelLeft } from 'lucide-react';
 import { UserButton } from '@clerk/nextjs';
 import { Button } from '@/components';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useAppStore } from '@/stores/appStore';
 import type { SaveStatus } from './useLazyDiagramSave';
 
 interface ChatFirstToolbarProps {
@@ -33,6 +33,7 @@ export function ChatFirstToolbar({
 }: ChatFirstToolbarProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
+  const toggleSidebar = useAppStore((s) => s.toggleSidebar);
   const undo = useCanvasStore((s) => s.undo);
   const redo = useCanvasStore((s) => s.redo);
   const undoStack = useCanvasStore((s) => s.undoStack);
@@ -58,9 +59,13 @@ export function ChatFirstToolbar({
     <div className="flex h-10 items-center justify-between border-b border-neutral-200 bg-white px-3">
       {/* Left: Logo + Title */}
       <div className="flex items-center gap-3">
-        <Link href="/dashboard" className="text-sm font-bold text-neutral-900 hover:text-brand-primary">
+        <button
+          onClick={toggleSidebar}
+          className="flex items-center gap-1.5 text-sm font-bold text-neutral-900 hover:text-brand-primary"
+        >
+          <PanelLeft className="h-4 w-4" />
           Diagram
-        </Link>
+        </button>
         <div className="h-4 w-px bg-neutral-200" />
         {isEditingTitle ? (
           <input

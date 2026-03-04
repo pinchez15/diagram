@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { CanvasEditor } from './CanvasEditor';
 import { ChatFirstToolbar } from './ChatFirstToolbar';
+import { EditorSidebar } from './EditorSidebar';
 import { NodePalette } from './NodePalette';
 import { PropertiesPanel } from './PropertiesPanel';
 import { ChatPanel } from './ChatPanel';
@@ -19,6 +21,7 @@ interface ChatFirstEditorProps {
 }
 
 export function ChatFirstEditor({ diagramId, initialSchema }: ChatFirstEditorProps) {
+  const router = useRouter();
   const schema = initialSchema ?? createEmptySchema('workflow', 'Untitled Diagram');
   const [title, setTitle] = useState(schema.metadata.title);
   const [diagramType] = useState<DiagramType>(schema.metadata.type);
@@ -109,6 +112,10 @@ export function ChatFirstEditor({ diagramId, initialSchema }: ChatFirstEditorPro
         edgeCount={edges.length}
       />
       <div className="flex flex-1 overflow-hidden">
+        <EditorSidebar
+          onNewDiagram={() => router.push('/new')}
+          currentDiagramId={diagramId}
+        />
         {showPalette && <NodePalette />}
         <div className="flex-1">
           <CanvasEditor />

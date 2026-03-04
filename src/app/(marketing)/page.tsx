@@ -52,7 +52,7 @@ export default function LandingPage() {
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
-            href="/templates"
+            href="/new"
             className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-6 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
           >
             View templates

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useAppStore } from '@/stores/appStore';
 import type { DiagramType } from '@/types/diagram';
 
 export type SaveStatus = 'new' | 'saved' | 'saving' | 'unsaved' | 'error';
@@ -102,6 +103,7 @@ export function useLazyDiagramSave({ diagramId, title, diagramType }: UseLazyDia
       setCurrentId(newId);
       lastSavedRef.current = JSON.stringify(schema);
       setSaveStatus('saved');
+      useAppStore.getState().incrementDiagramListVersion();
 
       return newId;
     } catch {
