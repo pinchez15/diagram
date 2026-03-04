@@ -27,7 +27,7 @@ export function AppSidebar() {
 
       {/* New Diagram button */}
       <div className="px-3 pb-2">
-        <Link href="/dashboard?new=true">
+        <Link href="/new">
           <Button variant="primary" size="default" className="w-full">
             <Plus className="h-4 w-4" />
             New Diagram

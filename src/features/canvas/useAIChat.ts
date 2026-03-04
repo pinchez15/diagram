@@ -11,9 +11,10 @@ export interface ChatMessage {
 
 interface UseAIChatOptions {
   diagramType: DiagramType;
+  onDiagramGenerated?: () => void;
 }
 
-export function useAIChat({ diagramType }: UseAIChatOptions) {
+export function useAIChat({ diagramType, onDiagramGenerated }: UseAIChatOptions) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -74,6 +75,7 @@ export function useAIChat({ diagramType }: UseAIChatOptions) {
       if (data.diagram) {
         pushSnapshot();
         loadDiagram(data.diagram);
+        onDiagramGenerated?.();
       }
     } catch (error) {
       const errorMessage: ChatMessage = {
@@ -85,7 +87,7 @@ export function useAIChat({ diagramType }: UseAIChatOptions) {
     } finally {
       setIsLoading(false);
     }
-  }, [messages, nodes.length, serialize, diagramType, pushSnapshot, loadDiagram]);
+  }, [messages, nodes.length, serialize, diagramType, pushSnapshot, loadDiagram, onDiagramGenerated]);
 
   const clearMessages = useCallback(() => {
     setMessages([]);

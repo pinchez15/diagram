@@ -28,7 +28,7 @@ export function PropertiesPanel({ selectedNode, onClose }: PropertiesPanelProps)
   if (!selectedNode) return null;
 
   return (
-    <div className="flex w-70 flex-col border-l border-neutral-200 bg-white">
+    <div className="flex w-[360px] flex-col border-l border-neutral-200 bg-white">
       <div className="flex h-10 items-center justify-between border-b border-neutral-200 px-3">
         <span className="text-sm font-semibold text-neutral-700">Properties</span>
         <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600">

@@ -6,9 +6,16 @@ import { Button } from '@/components';
 import { useAIChat, type ChatMessage } from './useAIChat';
 import type { DiagramType } from '@/types/diagram';
 
+const SUGGESTION_CHIPS = [
+  'Customer onboarding workflow',
+  'Team org chart',
+  'Support escalation process',
+];
+
 interface ChatPanelProps {
   diagramType: DiagramType;
-  onClose: () => void;
+  onClose?: () => void;
+  onDiagramGenerated?: () => void;
 }
 
 function MessageBubble({ message }: { message: ChatMessage }) {
@@ -47,8 +54,8 @@ function TypingIndicator() {
   );
 }
 
-export function ChatPanel({ diagramType, onClose }: ChatPanelProps) {
-  const { messages, isLoading, sendMessage, clearMessages } = useAIChat({ diagramType });
+export function ChatPanel({ diagramType, onClose, onDiagramGenerated }: ChatPanelProps) {
+  const { messages, isLoading, sendMessage, clearMessages } = useAIChat({ diagramType, onDiagramGenerated });
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -102,9 +109,11 @@ export function ChatPanel({ diagramType, onClose }: ChatPanelProps) {
               <Trash2 className="h-3.5 w-3.5" />
             </button>
           )}
-          <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600 p-0.5">
-            <X className="h-4 w-4" />
-          </button>
+          {onClose && (
+            <button onClick={onClose} className="text-neutral-400 hover:text-neutral-600 p-0.5">
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -121,6 +130,21 @@ export function ChatPanel({ diagramType, onClose }: ChatPanelProps) {
             <p className="text-xs text-neutral-400 mt-2">
               Example: &quot;Sam is the CEO, his direct reports are James, Gary and Janice...&quot;
             </p>
+            <div className="mt-4 flex flex-col gap-2 w-full">
+              {SUGGESTION_CHIPS.map((chip) => (
+                <button
+                  key={chip}
+                  onClick={() => {
+                    setInput('');
+                    sendMessage(chip);
+                  }}
+                  disabled={isLoading}
+                  className="rounded-full border border-neutral-200 px-3 py-1.5 text-xs text-neutral-600 hover:bg-neutral-50 hover:border-brand-primary hover:text-brand-primary transition-colors"
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
           </div>
         )}
         {messages.map((msg) => (
