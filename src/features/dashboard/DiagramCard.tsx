@@ -9,7 +9,7 @@ import type { DiagramListItem } from '@/types/api';
 const TYPE_BADGES: Record<string, string> = {
   workflow: 'bg-blue-100 text-blue-700',
   orgchart: 'bg-green-100 text-green-700',
-  swimlane: 'bg-purple-100 text-purple-700',
+  swimlane: 'bg-teal-100 text-teal-700',
 };
 
 interface DiagramCardProps {

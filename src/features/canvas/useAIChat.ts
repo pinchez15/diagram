@@ -68,17 +68,7 @@ export function useAIChat({ diagramType }: UseAIChatOptions) {
         hasDiagram: !!data.diagram,
       };
 
-      // For the API, we send the raw JSON as the assistant's content
-      // so the AI can see its own previous responses in context
-      const assistantApiContent = JSON.stringify({
-        message: data.message,
-        diagram: data.diagram ? '(diagram included)' : null,
-      });
-
-      setMessages((prev) => [
-        ...prev,
-        { ...assistantMessage, content: data.message },
-      ]);
+      setMessages((prev) => [...prev, assistantMessage]);
 
       // If diagram was returned, load it onto the canvas
       if (data.diagram) {

@@ -25,7 +25,7 @@ const CATEGORIES = ['Flow', 'People', 'Integration'];
 const NODE_SHAPES: Record<NodeType, string> = {
   process: 'w-6 h-4 rounded border border-neutral-400 bg-white',
   decision: 'w-4 h-4 rotate-45 border border-neutral-400 bg-white',
-  toolService: 'w-6 h-4 rounded-lg border-2 border-purple-400 bg-purple-50',
+  toolService: 'w-6 h-4 rounded-lg border-2 border-blue-400 bg-blue-50',
   dataStore: 'w-6 h-4 rounded border border-blue-400 bg-blue-50 border-t-2',
   person: 'w-5 h-5 rounded-full border border-neutral-400 bg-neutral-100',
   startEnd: 'w-6 h-3 rounded-full border border-neutral-400 bg-neutral-100',

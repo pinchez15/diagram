@@ -115,7 +115,7 @@ export function ImportForm() {
       {/* Mermaid hint */}
       <div className="rounded-md border border-neutral-200 bg-neutral-50 p-4">
         <div className="flex items-center gap-2 mb-1">
-          <Sparkles className="h-4 w-4 text-brand-secondary" />
+          <Sparkles className="h-4 w-4 text-brand-primary" />
           <span className="text-sm font-medium text-neutral-700">Have a Mermaid diagram?</span>
         </div>
         <p className="text-xs text-neutral-500">

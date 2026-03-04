@@ -16,11 +16,6 @@ interface ChatRequest {
   diagramType: DiagramType;
 }
 
-interface ChatResponse {
-  message: string;
-  diagram: DiagramSchema | null;
-}
-
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
@@ -35,25 +30,41 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Messages are required' }, { status: 400 });
     }
 
+    // Check API key is configured
+    if (!process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY.startsWith('sk-ant-placeholder')) {
+      return NextResponse.json(
+        { error: 'ANTHROPIC_API_KEY is not configured. Set it in your Vercel environment variables.' },
+        { status: 500 }
+      );
+    }
+
     const supabase = createServiceClient();
 
-    // Check plan
-    const { data: profile } = await supabase
+    // Check plan — gracefully handle errors
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('plan')
       .eq('clerk_user_id', userId)
       .single();
 
+    if (profileError) {
+      console.error('[ai/chat] Profile query error:', profileError.message);
+    }
+
     const plan = profile?.plan || 'individual';
 
-    // Check usage
+    // Check usage — gracefully handle errors
     const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
-    const { data: usage } = await supabase
+    const { data: usage, error: usageError } = await supabase
       .from('usage')
       .select('ai_generation_count')
       .eq('user_id', userId)
       .eq('month', currentMonth)
       .single();
+
+    if (usageError && usageError.code !== 'PGRST116') {
+      console.error('[ai/chat] Usage query error:', usageError.message);
+    }
 
     const aiCount = usage?.ai_generation_count || 0;
 
@@ -72,7 +83,7 @@ export async function POST(request: NextRequest) {
           jsonStr = jsonStr.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
         }
 
-        const parsed = JSON.parse(jsonStr) as ChatResponse;
+        const parsed = JSON.parse(jsonStr) as { message: string; diagram: DiagramSchema | null };
 
         if (!parsed.message) {
           throw new Error('Response missing "message" field');
@@ -82,12 +93,10 @@ export async function POST(request: NextRequest) {
         if (parsed.diagram) {
           // Check usage limit before counting
           if (plan === 'individual' && aiCount >= MAX_AI_GENERATIONS_FREE) {
-            return NextResponse.json(
-              {
-                message: "I'd love to update your diagram, but you've reached the free plan AI generation limit. Upgrade to continue!",
-                diagram: null,
-              } satisfies ChatResponse
-            );
+            return NextResponse.json({
+              message: "I'd love to update your diagram, but you've reached the free plan AI generation limit. Upgrade to continue!",
+              diagram: null,
+            });
           }
 
           const validation = validateDiagramSchema(parsed.diagram);
@@ -98,7 +107,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({
               message: parsed.message + "\n\n(Note: I tried to update the diagram but encountered a validation error. Please try again.)",
               diagram: null,
-            } satisfies ChatResponse);
+            });
           }
 
           // Increment usage — only when diagram is returned
@@ -110,19 +119,20 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({
             message: parsed.message,
             diagram: validation.data,
-          } satisfies ChatResponse);
+          });
         }
 
         // No diagram — just a chat message
         return NextResponse.json({
           message: parsed.message,
           diagram: null,
-        } satisfies ChatResponse);
+        });
       } catch (error) {
-        console.error(`[ai/chat] Error on attempt ${attempt + 1}:`, error instanceof Error ? error.message : error);
+        const errMsg = error instanceof Error ? error.message : String(error);
+        console.error(`[ai/chat] Error on attempt ${attempt + 1}:`, errMsg);
         if (attempt === 1) {
           return NextResponse.json(
-            { error: 'AI chat failed', details: error instanceof Error ? error.message : 'Unknown error' },
+            { error: `AI chat failed: ${errMsg}` },
             { status: 500 }
           );
         }
@@ -131,9 +141,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ error: 'AI chat failed after retries' }, { status: 500 });
   } catch (outerError) {
+    const errMsg = outerError instanceof Error ? outerError.message : String(outerError);
     console.error('[ai/chat] Unhandled error:', outerError instanceof Error ? outerError.stack : outerError);
     return NextResponse.json(
-      { error: 'Internal server error', details: outerError instanceof Error ? outerError.message : 'Unknown error' },
+      { error: `Internal server error: ${errMsg}` },
       { status: 500 }
     );
   }

@@ -18,7 +18,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   secondary: 'bg-white text-neutral-700 border border-neutral-300 hover:bg-neutral-50 focus-visible:ring-brand-primary',
   ghost: 'bg-transparent text-neutral-600 hover:bg-neutral-100 focus-visible:ring-brand-primary',
   danger: 'bg-error text-white hover:bg-red-700 focus-visible:ring-error',
-  ai: 'bg-brand-secondary text-white hover:bg-purple-700 focus-visible:ring-brand-secondary shimmer',
+  ai: 'bg-brand-primary text-white hover:bg-blue-700 focus-visible:ring-brand-primary shimmer',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {

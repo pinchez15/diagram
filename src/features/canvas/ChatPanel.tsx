@@ -25,7 +25,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
       >
         {message.content}
         {message.hasDiagram && (
-          <div className="mt-1.5 inline-flex items-center gap-1 rounded bg-brand-secondary/10 px-1.5 py-0.5 text-xs font-medium text-brand-secondary">
+          <div className="mt-1.5 inline-flex items-center gap-1 rounded bg-brand-primary/10 px-1.5 py-0.5 text-xs font-medium text-brand-primary">
             <Sparkles className="h-3 w-3" />
             Diagram updated
           </div>
@@ -39,9 +39,9 @@ function TypingIndicator() {
   return (
     <div className="flex justify-start">
       <div className="flex items-center gap-1 rounded-lg rounded-bl-sm bg-neutral-100 px-3 py-2">
-        <span className="typing-dot h-1.5 w-1.5 rounded-full bg-brand-secondary" />
-        <span className="typing-dot h-1.5 w-1.5 rounded-full bg-brand-secondary" />
-        <span className="typing-dot h-1.5 w-1.5 rounded-full bg-brand-secondary" />
+        <span className="typing-dot h-1.5 w-1.5 rounded-full bg-brand-primary" />
+        <span className="typing-dot h-1.5 w-1.5 rounded-full bg-brand-primary" />
+        <span className="typing-dot h-1.5 w-1.5 rounded-full bg-brand-primary" />
       </div>
     </div>
   );
@@ -89,7 +89,7 @@ export function ChatPanel({ diagramType, onClose }: ChatPanelProps) {
       {/* Header */}
       <div className="flex h-10 items-center justify-between border-b border-neutral-200 px-3">
         <div className="flex items-center gap-1.5">
-          <Sparkles className="h-3.5 w-3.5 text-brand-secondary" />
+          <Sparkles className="h-3.5 w-3.5 text-brand-primary" />
           <span className="text-sm font-semibold text-neutral-700">AI Chat</span>
         </div>
         <div className="flex items-center gap-1">
@@ -112,8 +112,8 @@ export function ChatPanel({ diagramType, onClose }: ChatPanelProps) {
       <div className="flex-1 overflow-y-auto p-3 space-y-3">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-secondary/10 mb-3">
-              <Sparkles className="h-5 w-5 text-brand-secondary" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-primary/10 mb-3">
+              <Sparkles className="h-5 w-5 text-brand-primary" />
             </div>
             <p className="text-sm text-neutral-600 leading-relaxed">
               Describe your organization, workflow, or process, and I&apos;ll build the diagram for you.
